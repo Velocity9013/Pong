@@ -57,7 +57,7 @@ end
 
 function love.update(dt)
     if gameState == 'serve' then
-        if gameMode == 'pvp' or gameMode == 'pvc' then
+        if gameMode == 'pvp' or gameMode == 'pvc' or gameMode == 'cvc' then
             ball.dy = math.random(-50, 50)
             if servingPlayer == 1 then
                 ball.dx = math.random(140, 200)
@@ -169,6 +169,25 @@ function love.update(dt)
             player2.dy = 0
         end
 
+    elseif gameMode == 'cvc' then
+
+        if (player1.y + player1.height / 2) > ball.y + ball.height / 2 then
+            player1.dy = -PADDLE_SPEED
+        elseif (player1.y + player1.height / 2) < ball.y + ball.height / 2 then
+            player1.dy = PADDLE_SPEED
+        else
+            player1.dy = 0
+        end    
+
+
+        if (player2.y + player2.height / 2) > ball.y + ball.height / 2 then
+            player2.dy = -PADDLE_SPEED
+        elseif (player2.y + player2.height / 2) < ball.y + ball.height / 2 then
+            player2.dy = PADDLE_SPEED
+        else
+            player2.dy = 0
+        end
+
     end
 
     if gameState == 'play' then
@@ -184,7 +203,7 @@ function love.keypressed(key)
     if key == 'escape' then
         love.event.quit()
     elseif key == 'space' then
-        if gameMode == 'pvp' or gameMode == 'pvc' then 
+        if gameMode == 'pvp' or gameMode == 'pvc' or gameMode == 'cvc' then 
             if gameState == 'start' then
                 gameState = 'serve'
             elseif gameState == 'serve' then
@@ -211,6 +230,8 @@ function love.keypressed(key)
             gameMode = 'pvp'
         elseif key == '2' then
             gameMode = 'pvc'
+        elseif key == '3' then
+            gameMode = 'cvc'
         end
         gameState = 'start'
     end
@@ -231,7 +252,7 @@ function love.draw()
         love.graphics.setFont(largeFont)
         love.graphics.printf('Chose a gamemode', 0, 10, VIRTUAL_WIDTH, 'center')
         love.graphics.setFont(smallFont)
-        love.graphics.printf('1. Player vs Player \n 2. Player vs Computer', 0, 50, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('1. Player vs Player \n 2. Player vs Computer \n 3. Computer vs Computer', 0, 50, VIRTUAL_WIDTH, 'center')
     elseif gameState == 'start' then
         love.graphics.setFont(smallFont)
         love.graphics.printf('Welcome to Pong!', 0, 10, VIRTUAL_WIDTH, 'center')
@@ -251,6 +272,10 @@ function love.draw()
                 love.graphics.printf("Computer's serve!", 0, 10, VIRTUAL_WIDTH, 'center')
                 love.graphics.printf('Press Space to serve!', 0, 20, VIRTUAL_WIDTH, 'center')
             end
+        elseif gameMode == 'cvc' then
+            love.graphics.setFont(smallFont)
+            love.graphics.printf('Computer ' .. tostring(servingPlayer) .. "'s serve!", 0, 10, VIRTUAL_WIDTH, 'center')
+            love.graphics.printf('Press Space to serve!', 0, 20, VIRTUAL_WIDTH, 'center')
         end
     elseif gameState == 'play' then
 
@@ -271,7 +296,12 @@ function love.draw()
                 love.graphics.printf("Computer wins!", 0, 10, VIRTUAL_WIDTH, 'center')
                 love.graphics.setFont(smallFont)
                 love.graphics.printf('Press Space to restart!', 0, 30, VIRTUAL_WIDTH, 'center')
-            end   
+            end
+        elseif gameMode == 'cvc'  then
+            love.graphics.setFont(largeFont)
+            love.graphics.printf('Computer ' .. tostring(winningPlayer) .. ' wins!', 0, 10, VIRTUAL_WIDTH, 'center')
+            love.graphics.setFont(smallFont)
+            love.graphics.printf('Press Space to restart!', 0, 30, VIRTUAL_WIDTH, 'center')
         end
     end
 
